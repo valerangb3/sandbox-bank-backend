@@ -31,4 +31,6 @@ dependencies {
     implementation(libs.ktor.server.auth)
     implementation(libs.ktor.server.auth.jwt)
     implementation(libs.dotenv.kotlin)
+    implementation(libs.exposed.migration.core)
+    implementation(libs.exposed.migration.jdbc)
 }

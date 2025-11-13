@@ -6,6 +6,7 @@ import com.example.config.JwtConfig
 import com.example.domain.model.LoginUser
 import com.example.domain.model.RegisterUser
 import com.example.repository.UserRepository
+import com.example.routing.model.request.RefreshRequest
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -35,6 +36,10 @@ fun Application.configureAuthRouting(repository: UserRepository) {
                     .sign(Algorithm.HMAC256(jwtConfig.secret))
 
                 call.respond(hashMapOf("token" to token))
+
+            }
+            post("/refresh") {
+                val refreshRequest = call.receive<RefreshRequest>()
 
             }
             post("/registration") {

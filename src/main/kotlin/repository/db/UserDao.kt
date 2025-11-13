@@ -1,9 +1,9 @@
-package com.example.repository.db
+package repository.db
 
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
+import org.jetbrains.exposed.v1.dao.IntEntity
+import org.jetbrains.exposed.v1.dao.IntEntityClass
 
 object UserTable : IntIdTable("users") {
     val login = varchar("login", 50)
@@ -13,6 +13,8 @@ object UserTable : IntIdTable("users") {
     val lastName = varchar("last_name", 100)
     val firstName = varchar("first_name", 100)
     val patronymic = varchar("patronymic", 100)
+    val accessToken = varchar("access_token", 300)
+    val refreshToken = varchar("refresh_token", 300)
 }
 
 class UserDAO(id: EntityID<Int>) : IntEntity(id) {
@@ -25,4 +27,6 @@ class UserDAO(id: EntityID<Int>) : IntEntity(id) {
     var lastName by UserTable.lastName
     var firstName by UserTable.firstName
     var patronymic by UserTable.patronymic
+    var accessToken by UserTable.accessToken
+    var refreshToken by UserTable.refreshToken
 }

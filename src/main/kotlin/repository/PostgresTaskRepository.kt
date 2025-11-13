@@ -6,8 +6,8 @@ import com.example.repository.db.taskDaoToModel
 import com.example.repository.db.suspendTransaction
 import com.example.repository.model.Priority
 import com.example.repository.model.Task
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
 
 class PostgresTaskRepository : TaskRepository {
     override suspend fun allTasks(): List<Task> = suspendTransaction {

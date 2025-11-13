@@ -1,6 +1,6 @@
 package com.example.repository
 
-import com.example.repository.db.UserDAO
+import repository.db.UserDAO
 import com.example.repository.db.suspendTransaction
 import com.example.domain.model.RegisterUser
 import com.example.repository.model.User
