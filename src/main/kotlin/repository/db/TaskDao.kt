@@ -9,6 +9,7 @@ object TaskTable : IntIdTable("task") {
     val name = varchar("name", 50)
     val description = varchar("description", 50)
     val priority = varchar("priority", 50)
+    val foo = varchar("foo", 50)
 }
 
 class TaskDAO(id: EntityID<Int>) : IntEntity(id) {
@@ -17,4 +18,5 @@ class TaskDAO(id: EntityID<Int>) : IntEntity(id) {
     var name by TaskTable.name
     var description by TaskTable.description
     var priority by TaskTable.priority
+    var foo by TaskTable.foo
 }

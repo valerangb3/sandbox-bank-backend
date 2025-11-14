@@ -10,3 +10,9 @@ jwt:
     issuer: ${JWT_ISSUER}
     audience: ${JWT_AUDIENCE}
     realm: ${JWT_REALM}
+
+#jwt:
+#    secret: secret
+#    issuer: https://vgb3.com/
+#    audience: sandbox-bank
+#    realm: Access to sandbox-bank

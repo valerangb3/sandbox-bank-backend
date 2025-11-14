@@ -4,9 +4,9 @@ h2 = "2.3.232"
 kotlin = "2.2.20"
 ktor = "3.3.1"
 logback = "1.4.14"
-postgres = "42.7.8"
+postgres = "42.6.0"
 dotenv-kotlin = "6.5.1"
-migration = "1.0.0-rc-3"
+flyway = "9.22.3"
 
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
@@ -30,6 +30,7 @@ ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = 
 dotenv-kotlin = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "dotenv-kotlin" }
 exposed-migration-core = { module = "org.jetbrains.exposed:exposed-migration-core", version.ref = "exposed" }
 exposed-migration-jdbc = { module = "org.jetbrains.exposed:exposed-migration-jdbc", version.ref = "exposed" }
+flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

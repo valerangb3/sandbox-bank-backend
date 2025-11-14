@@ -15,10 +15,10 @@ import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respondText
 
 fun main(args: Array<String>) {
-    val dotenv = dotenv {
+    /*val dotenv = dotenv {
         ignoreIfMissing = false // не падаем, если .env нет (например, в проде)
     }
-    dotenv.entries().forEach { System.setProperty(it.key, it.value) }
+    dotenv.entries().forEach { System.setProperty(it.key, it.value) }*/
     io.ktor.server.netty.EngineMain.main(args)
 }
 

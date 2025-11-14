@@ -18,8 +18,8 @@ class ApplicationTest {
     fun tasksCanBeFoundByPriority() = testApplication {
         application {
             val repository = FakeTaskRepository()
-            configureSerialization(repository)
-            configureRouting()
+//            configureSerialization(repository)
+            configureRouting(repository)
         }
 
         val client = createClient {
@@ -42,8 +42,8 @@ class ApplicationTest {
     fun invalidPriorityProduces400() = testApplication {
         application {
             val repository = FakeTaskRepository()
-            configureSerialization(repository)
-            configureRouting()
+//            configureSerialization(repository)
+            configureRouting(repository)
         }
         val response = client.get("/tasks/byPriority/Invalid")
         assertEquals(HttpStatusCode.BadRequest, response.status)
@@ -53,8 +53,8 @@ class ApplicationTest {
     fun unusedPriorityProduces404() = testApplication {
         application {
             val repository = FakeTaskRepository()
-            configureSerialization(repository)
-            configureRouting()
+//            configureSerialization()
+            configureRouting(repository)
         }
 
         val response = client.get("/tasks/byPriority/Vital")
@@ -65,8 +65,8 @@ class ApplicationTest {
     fun newTasksCanBeAdded() = testApplication {
         application {
             val repository = FakeTaskRepository()
-            configureSerialization(repository)
-            configureRouting()
+//            configureSerialization(repository)
+            configureRouting(repository)
         }
 
         val client = createClient {

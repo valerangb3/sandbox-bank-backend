@@ -2,53 +2,66 @@
 
 package org.example
 
-import com.example.repository.db.TaskTable
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
+import org.flywaydb.core.Flyway
 import repository.db.UserTable
 import org.jetbrains.exposed.v1.core.ExperimentalDatabaseMigrationApi
 import org.jetbrains.exposed.v1.jdbc.Database
-import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.jetbrains.exposed.v1.migration.jdbc.MigrationUtils
+import javax.sql.DataSource
 
-const val MIGRATIONS_DIRECTORY = "src/main/kotlin/migrations" // Location of migration scripts
+const val MIGRATIONS_DIRECTORY = "src/main/resources/db/migration" // Location of migration scripts
 
-val h2db = Database.connect(
-    "jdbc:postgresql://localhost:5432/vgb3",
-    user = "vgb3",
-    password = "qwerty"
-)
+private const val URL = "jdbc:postgresql://localhost:5432/vgb3"
+private const val USER = "vgb3"
+private const val PASSWORD = "qwerty"
+
+
+fun createPostgresDataSource(): DataSource {
+    val config = HikariConfig()
+    config.jdbcUrl = URL
+    config.username = USER
+    config.password = PASSWORD
+    config.maximumPoolSize = 10
+    return HikariDataSource(config)
+}
 
 fun main() {
-    simulateExistingDatabase(h2db)
+    val postgresDataSource = createPostgresDataSource()
+    val flyway = Flyway.configure()
+        .dataSource(URL, USER, PASSWORD)
+        //.driver("org.postgresql.Driver")
+        .locations("classpath:db/migration")
+        .baselineOnMigrate(true)
+        .schemas("public")
+        .load()
+
+    val h2db = Database.connect(
+        postgresDataSource
+    )
+    //simulateExistingDatabase(h2db)
 
     transaction(h2db) {
-        generateMigrationScript()
+        //generateMigrationScript()
+        flyway.migrate()
     }
 }
 
 fun simulateExistingDatabase(database: Database) {
     transaction(database) {
         exec("DROP TABLE IF EXISTS task CASCADE")
-        exec("CREATE TABLE task(id SERIAL PRIMARY KEY, name VARCHAR(50), description VARCHAR(50), priority VARCHAR(50))")
-
-        exec("INSERT INTO task (name, description, priority) VALUES ('cleaning', 'Clean the house', 'Low')")
-        exec("INSERT INTO task (name, description, priority) VALUES ('gardening', 'Mow the lawn', 'Medium')")
-        exec("INSERT INTO task (name, description, priority) VALUES ('shopping', 'Buy the groceries', 'High')")
-        exec("INSERT INTO task (name, description, priority) VALUES ('painting', 'Paint the fence', 'Medium')")
-        exec("INSERT INTO task (name, description, priority) VALUES ('exercising', 'Walk the dog', 'Medium')")
-        exec("INSERT INTO task (name, description, priority) VALUES ('meditating', 'Contemplate the infinite', 'High')")
-
-        // exec("DROP TABLE IF EXISTS TASK")
-        // exec("CREATE TABLE IF NOT EXISTS TASK (ID UUID NOT NULL, EMAIL VARCHAR(320) NOT NULL)")
-        // exec("INSERT INTO TASK (EMAIL, ID) VALUES ('root1@root.com', '05fb3246-9387-4d04-a27f-fa0107c33883')")
+        exec("DROP TABLE IF EXISTS users CASCADE")
     }
 }
 
 fun generateMigrationScript() {
     // Generate a migration script in the specified path
     MigrationUtils.generateMigrationScript(
-        TaskTable,
+        UserTable,
         scriptDirectory = MIGRATIONS_DIRECTORY,
-        scriptName = "V2__Add_primary_key_task",
+        scriptName = "V1__create_user",
+        withLogs = true
     )
 }

@@ -5,7 +5,7 @@ import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
 import org.jetbrains.exposed.v1.dao.IntEntity
 import org.jetbrains.exposed.v1.dao.IntEntityClass
 
-object UserTable : IntIdTable("users") {
+object UserTable : IntIdTable("user") {
     val login = varchar("login", 50)
     val email = varchar("email", 100)
     val passwordHash = varchar("password_hash", 500)
