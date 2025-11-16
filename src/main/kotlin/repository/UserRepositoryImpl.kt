@@ -3,8 +3,11 @@ package com.example.repository
 import repository.db.UserDAO
 import com.example.repository.db.suspendTransaction
 import com.example.domain.model.RegisterUser
+import com.example.repository.db.userDaoToModel
 import com.example.repository.model.User
 import com.example.security.md5
+import org.jetbrains.exposed.v1.core.eq
+import repository.db.UserTable
 
 class UserRepositoryImpl : UserRepository {
     override suspend fun create(user: RegisterUser): Boolean {
@@ -26,7 +29,14 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    override suspend fun userByLogin(login: String): User {
-        TODO("Not yet implemented")
+    override suspend fun userByLogin(login: String): User? {
+        return UserDAO
+            .find { (UserTable.login eq login) }
+            .map(::userDaoToModel)
+            .firstOrNull()
+    }
+
+    override suspend fun isPasswordEquals(password: String, user: User): Boolean {
+        return md5(password) == user.passwordHash
     }
 }

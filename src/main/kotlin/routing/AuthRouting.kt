@@ -17,28 +17,49 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import routing.model.response.JwtTokensResponse
+import routing.model.response.ServerResponse
+import service.JwtService
 import java.util.Date
 
-fun Application.configureAuthRouting(repository: UserRepository) {
+fun Application.configureAuthRouting(
+    repository: UserRepository,
+    jwtService: JwtService
+) {
 
 
     routing {
         route("/api/v1") {
             post("/auth") {
-                val user = call.receive<LoginUser>()
-                //TODO check username and password
-                val jwtConfig = JwtConfig(environment.config)
-                val token = JWT.create()
-                    .withAudience(jwtConfig.audience)
-                    .withIssuer(jwtConfig.issuer)
-                    .withClaim("login", user.login)
-                    .withExpiresAt(Date(System.currentTimeMillis() + 60_000))
-                    .sign(Algorithm.HMAC256(jwtConfig.secret))
-
-                call.respond(hashMapOf("token" to token))
-
+                val userRequest = call.receive<LoginUser>()
+                val user = repository.userByLogin(userRequest.login)
+                user?.let { curUser ->
+                    val isEquals = repository.isPasswordEquals(userRequest.password, curUser)
+                    if (isEquals) {
+                        val (accessToken, refreshToken) = jwtService.genTokens(userRequest)
+                        val response = ServerResponse(
+                            status = 201,
+                            message = "success",
+                            data = JwtTokensResponse(accessToken = accessToken, refreshToken = refreshToken)
+                        )
+                        call.respond(response)
+                    } else {
+                        ServerResponse(
+                            status = 202,
+                            message = "error",
+                            data = "invalid password"
+                        )
+                    }
+                } ?: call.respond(
+                    ServerResponse(
+                        status = 401,
+                        message = "error",
+                        data = "user not exist"
+                    )
+                )
             }
             post("/refresh") {
+                //TODO доделать рефреш токена
                 val refreshRequest = call.receive<RefreshRequest>()
 
             }
