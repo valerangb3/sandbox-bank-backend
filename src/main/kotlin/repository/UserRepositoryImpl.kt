@@ -36,6 +36,13 @@ class UserRepositoryImpl : UserRepository {
             .firstOrNull()
     }
 
+    override suspend fun userByToken(token: String): User? {
+        return UserDAO
+            .find { (UserTable.refreshToken eq token) }
+            .map(::userDaoToModel)
+            .firstOrNull()
+    }
+
     override suspend fun isPasswordEquals(password: String, user: User): Boolean {
         return md5(password) == user.passwordHash
     }

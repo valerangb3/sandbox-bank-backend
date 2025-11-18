@@ -24,7 +24,8 @@ import java.util.Date
 
 fun Application.configureAuthRouting(
     repository: UserRepository,
-    jwtService: JwtService
+    jwtService: JwtService,
+
 ) {
 
 
