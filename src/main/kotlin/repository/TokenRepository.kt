@@ -1,9 +1,8 @@
 package repository
 
-import com.example.domain.model.LoginUser
-import domain.model.auth.Tokens
+import domain.model.auth.JwtTokens
 
-interface TokenRepository<T> {
-    suspend fun refreshToken(user: LoginUser): Tokens<T>
+interface TokenRepository {
+    suspend fun saveToken(login: String, tokens: JwtTokens)
     suspend fun getUserByToken(token: String): String?
 }

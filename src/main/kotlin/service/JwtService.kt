@@ -9,10 +9,10 @@ import io.ktor.server.application.ApplicationEnvironment
 import java.util.Date
 
 class JwtService(private val environment: ApplicationEnvironment) {
-    fun genTokens(user: LoginUser): JwtTokens {
+    fun genTokens(login: String): JwtTokens {
         return JwtTokens(
-            accessToken = genAccessToken(user.login),
-            refreshToken = genRefreshToken(user.login)
+            accessToken = genAccessToken(login),
+            refreshToken = genRefreshToken(login)
         )
     }
 

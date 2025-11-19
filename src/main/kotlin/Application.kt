@@ -13,6 +13,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respondText
+import repository.JwtTokenRepositoryImpl
+import service.AuthService
 import service.JwtService
 
 fun main(args: Array<String>) {
@@ -36,10 +38,12 @@ fun Application.module() {
     val repository = PostgresTaskRepository()
     val userRepository = UserRepositoryImpl()
     val jwtService = JwtService(environment)
+    val tokenRepository = JwtTokenRepositoryImpl(userRepository)
+    val authService = AuthService(userRepository, tokenRepository, jwtService)
 
     configureSerialization()
     configureDatabases()
     configureSecurity()
-    configureAuthRouting(userRepository, jwtService)
+    configureAuthRouting(userRepository, authService)
     configureRouting(repository)
 }

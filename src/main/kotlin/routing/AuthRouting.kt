@@ -19,13 +19,14 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import routing.model.response.JwtTokensResponse
 import routing.model.response.ServerResponse
+import service.AuthError
+import service.AuthResult
+import service.AuthService
 import service.JwtService
-import java.util.Date
 
 fun Application.configureAuthRouting(
     repository: UserRepository,
-    jwtService: JwtService,
-
+    authService: AuthService
 ) {
 
 
@@ -33,31 +34,36 @@ fun Application.configureAuthRouting(
         route("/api/v1") {
             post("/auth") {
                 val userRequest = call.receive<LoginUser>()
-                val user = repository.userByLogin(userRequest.login)
-                user?.let { curUser ->
-                    val isEquals = repository.isPasswordEquals(userRequest.password, curUser)
-                    if (isEquals) {
-                        val (accessToken, refreshToken) = jwtService.genTokens(userRequest)
-                        val response = ServerResponse(
+                val result = authService.authenticate(userRequest)
+                val response = when (result) {
+                    is AuthResult.Success -> {
+                        val (accessToken, refreshToken) = result.tokes
+                        ServerResponse(
                             status = 201,
                             message = "success",
                             data = JwtTokensResponse(accessToken = accessToken, refreshToken = refreshToken)
                         )
-                        call.respond(response)
-                    } else {
-                        ServerResponse(
-                            status = 202,
-                            message = "error",
-                            data = "invalid password"
-                        )
                     }
-                } ?: call.respond(
-                    ServerResponse(
-                        status = 401,
-                        message = "error",
-                        data = "user not exist"
-                    )
-                )
+                    is AuthResult.Error -> {
+                        when (result.authError) {
+                            AuthError.INVALID_PASSWORD -> {
+                                ServerResponse(
+                                    status = 202,
+                                    message = "error",
+                                    data = "invalid password"
+                                )
+                            }
+                            AuthError.USER_NOT_EXIST -> {
+                                ServerResponse(
+                                    status = 401,
+                                    message = "error",
+                                    data = "user not exist"
+                                )
+                            }
+                        }
+                    }
+                }
+                call.respond(response)
             }
             post("/refresh") {
                 //TODO доделать рефреш токена
