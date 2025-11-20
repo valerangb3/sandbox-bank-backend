@@ -3,7 +3,6 @@ package service
 import com.example.domain.model.LoginUser
 import com.example.repository.UserRepository
 import com.example.repository.model.User
-import domain.model.auth.JwtTokens
 import repository.TokenRepository
 
 class AuthService(
@@ -11,10 +10,6 @@ class AuthService(
     private val tokenRepository: TokenRepository,
     private val jwtService: JwtService
 ) {
-    suspend fun getUserByLogin(login: String): User? {
-        val user = userRepository.userByLogin(login)
-        return user
-    }
 
     // Т.к. AuthService это общий комопнент который управляет аутентификацией
     // То реализацию обновление токена добавил в эту функцию
@@ -40,9 +35,5 @@ class AuthService(
                 AuthResult.Error(AuthError.INVALID_PASSWORD)
             }
         } ?: AuthResult.Error(AuthError.USER_NOT_EXIST)
-    }
-
-    suspend fun refreshToken() {
-
     }
 }

@@ -8,7 +8,8 @@ group = "com.example"
 version = "0.0.1"
 
 application {
-    mainClass = "io.ktor.server.netty.EngineMain"
+    // mainClass = "io.ktor.server.netty.EngineMain"
+    mainClass = "io.ktor.server.cio.EngineMain"
 }
 tasks.named<JavaExec>("run") {
     val envFile = file(".env")
@@ -29,6 +30,7 @@ tasks.named<JavaExec>("run") {
     }
 }
 dependencies {
+    implementation("io.ktor:ktor-server-cio:3.3.1")
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.server.content.negotiation)
@@ -52,5 +54,6 @@ dependencies {
     implementation(libs.exposed.migration.jdbc)
     implementation(libs.flyway)
     implementation("com.zaxxer:HikariCP:5.1.0")
+    implementation("io.netty:netty-transport-native-epoll:4.1.111.Final")
 }
 

@@ -3,8 +3,9 @@ package routing.model.response
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ServerResponse<T>(
+data class ServerResponse(
     val status: Int,
     val message: String,
-    val data: T
+    val description: String,
+    val data: JwtTokensResponse?
 )

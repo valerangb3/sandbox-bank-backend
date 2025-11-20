@@ -21,6 +21,8 @@ class UserRepositoryImpl : UserRepository {
                     email = user.email
                     patronymic = ""
                     phone = ""
+                    accessToken = ""
+                    refreshToken = ""
                 }
                 true
             }
@@ -30,17 +32,21 @@ class UserRepositoryImpl : UserRepository {
     }
 
     override suspend fun userByLogin(login: String): User? {
-        return UserDAO
-            .find { (UserTable.login eq login) }
-            .map(::userDaoToModel)
-            .firstOrNull()
+        return suspendTransaction {
+            UserDAO
+                .find { (UserTable.login eq login) }
+                .map(::userDaoToModel)
+                .firstOrNull()
+        }
     }
 
     override suspend fun userByToken(token: String): User? {
-        return UserDAO
-            .find { (UserTable.refreshToken eq token) }
-            .map(::userDaoToModel)
-            .firstOrNull()
+        return suspendTransaction {
+            UserDAO
+                .find { (UserTable.refreshToken eq token) }
+                .map(::userDaoToModel)
+                .firstOrNull()
+        }
     }
 
     override suspend fun isPasswordEquals(password: String, user: User): Boolean {

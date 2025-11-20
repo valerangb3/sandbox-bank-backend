@@ -1,6 +1,7 @@
 package repository
 
 import com.example.repository.UserRepository
+import com.example.repository.db.suspendTransaction
 import domain.model.auth.JwtTokens
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.update
@@ -10,9 +11,11 @@ class JwtTokenRepositoryImpl(
     private val userRepository: UserRepository,
 ) : TokenRepository {
     override suspend fun saveToken(login: String, tokens: JwtTokens) {
-        UserTable.update({ UserTable.login eq login }) {
-            it[accessToken] = tokens.accessToken
-            it[refreshToken] = tokens.refreshToken
+        suspendTransaction {
+            UserTable.update({ UserTable.login eq login }) {
+                it[accessToken] = tokens.accessToken
+                it[refreshToken] = tokens.refreshToken
+            }
         }
     }
 
